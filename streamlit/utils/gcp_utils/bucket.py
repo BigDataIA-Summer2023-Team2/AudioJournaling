@@ -54,3 +54,9 @@ def download_sound_blob(source_file_name):
     # and the audio sample rate
     data, sample_rate = sf.read(io.BytesIO(file_as_string))
     return data, sample_rate
+
+def download_as_file(source_file_name):
+    blob = bucket.blob(source_file_name)
+    destination_file_name = f".{source_file_name}"
+    blob.download_to_filename(destination_file_name)
+    return destination_file_name

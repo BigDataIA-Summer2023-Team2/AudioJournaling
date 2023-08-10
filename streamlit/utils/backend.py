@@ -4,6 +4,7 @@ from utils.gcp_utils import bucket
 from utils.pinecone_utils import get_similar_audios
 import os
 import uuid
+from datetime import datetime, timedelta
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -44,7 +45,7 @@ def create_new_audio(audio_file_name, access_token):
     audio = schemas.UserAudioMetadata(**data)
     crud.add_audio_metadata(db, audio)
 
-def fetch_journal_history(access_token, start_date, end_date):
+def fetch_journal_history(access_token, start_date=datetime.now() - timedelta(5), end_date = datetime.now()):
     db = SessionLocal()
     decoded_info = decode_token(access_token)
     data = {
@@ -56,8 +57,8 @@ def fetch_journal_history(access_token, start_date, end_date):
     return crud.get_journal_history(db, user_input)
 
 def fetch_file_gcs(file_url):
-    data, sr = bucket.download_sound_blob(file_url)
-    return data, sr
+    file_name = bucket.download_file(file_url)
+    return file_name
 
 
 # create_user("ashritha@gmail.com", "ashritha", "ashritha", "ashritha", "ashritha")
