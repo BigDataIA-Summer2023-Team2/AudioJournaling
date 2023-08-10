@@ -60,7 +60,7 @@ def upload_live_page():
             
             st.audio(audio_bytes, format="audio/wav")
             if st.button("Submit Live Audio"): 
-                save_audio(audio_bytes, sr)
+                save_audio(audio_data, sr)
                 st.success('Noted your journal!', icon="✅")
         else:
             st.error("No audio recorded.")

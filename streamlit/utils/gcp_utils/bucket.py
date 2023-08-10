@@ -56,7 +56,10 @@ def download_sound_blob(source_file_name):
     return data, sample_rate
 
 def download_as_file(source_file_name):
+    dest_file_name = os.path.join("/tmp", source_file_name)
+    dest_folder_name = "/".join(dest_file_name.split("/")[:-1])
+    os.makedirs(dest_folder_name, exist_ok=True)
     blob = bucket.blob(source_file_name)
-    destination_file_name = f".{source_file_name}"
-    blob.download_to_filename(destination_file_name)
-    return destination_file_name
+    blob.download_to_filename(dest_file_name)
+    print(f"File from GCS downloaded to {dest_file_name}")
+    return dest_file_name

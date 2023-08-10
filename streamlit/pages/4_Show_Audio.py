@@ -8,7 +8,7 @@ def list_audio_files():
 
 def get_journal_history():
     journal_history = backend.fetch_journal_history(st.session_state.auth_token)
-    audio_files = [f"{journal['id']}:{journal["file_url"]}" for journal in journal_history]
+    audio_files = [f"{journal['id']}:{journal['file_url']}" for journal in journal_history]
     return audio_files
 
 def get_audio_data(file_url):
@@ -31,10 +31,10 @@ if auth_user:
             st.write(f"{audio_file}")
 
         # Allow user to select an audio file to play
-        selected_idx = st.selectbox("Select an audio file to play:", range(1, len(audio_files) + 1))
-        selected_file = audio_files[selected_idx - 1]
-        downloaded_file = get_audio_data(selected_file.split(":")[-1])
-        st.write(f"Playing audio file: {selected_file}")
+        selected_idx = st.selectbox("Select an audio file to play:", audio_files)
+        selected_file = audio_files
+        downloaded_file = get_audio_data(selected_idx.split(":")[-1])
+        st.write(f"Playing audio file: {selected_idx}")
         st.audio(downloaded_file, format='audio/wav')
     else:
         st.write("No audio files found.")
