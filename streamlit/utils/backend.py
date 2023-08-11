@@ -97,16 +97,21 @@ def fetch_journal_history(access_token, start_date=datetime.now() - timedelta(5)
         return False, response.json().get("detail")
 
 def get_user_emotions(access_token, start_date=datetime.now() - timedelta(7), end_date=datetime.now()):
-    db = SessionLocal()
-    decoded_info = decode_token(access_token)
-    data = {
-        "start_date": start_date,
-        "end_date" : end_date,
-        "user_id": decoded_info.get("user_id")
+    url = f"{BACKEND_API_URL}/api/v1/user/emotion/history"
+    if not access_token:
+        access_token = ""
+    payload  = {
+        "start_date": start_date.isoformat(),
+        "end_date": end_date.isoformat(),
+        "access_token": access_token
     }
-    user_input = schemas.UserAudioHistory(**data)
-    emotions = crud.get_user_emotions(db, user_input)
-    return emotions
+    json_payload = json.dumps(payload)
+
+    response = requests.request("GET", url, headers=headers, data=json_payload)
+    if response.status_code == 200:
+        return True, response.json()
+    else:
+        return False, response.json().get("detail")
 
 def fetch_audio_file(access_token, file_name):
     url = f"{BACKEND_API_URL}/api/v1/user/journal/audio"

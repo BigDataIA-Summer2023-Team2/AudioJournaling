@@ -82,7 +82,7 @@ def upload_live_page():
 
 auth_user = authentication()
 
-if auth_user:
+if auth_user[0]:
     page_names = ['UploadAudio', 'RecordAudio'] 
     page = st.radio('Select one', page_names)
 

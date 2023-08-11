@@ -90,8 +90,9 @@ def get_emotion_audio_data(db: Session, user_input: schemas.DatasetAudio):
     return result.emotion
 
 def get_user_emotions(db: Session, user_input: schemas.UserAudioHistory):
+    decoded_info = generic.decode_token(user_input.access_token)
     result = db.query(models.UserAudioMetadata).filter(
-        models.UserAudioMetadata.user_id == user_input.user_id,
+        models.UserAudioMetadata.user_id == decoded_info.get("user_id"),
         models.UserAudioMetadata.timestamp.between(user_input.start_date, user_input.end_date)
         ).all()
     

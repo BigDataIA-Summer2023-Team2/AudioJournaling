@@ -23,15 +23,14 @@ def get_audio_data(file_url):
     response = backend.fetch_audio_file(st.session_state.auth_token, file_url)
     return response
 
-st.title("List of Audio Files")
-
 def authentication():
     response = backend.validate_access_token(st.session_state.auth_token)
     return response
 
 auth_user = authentication()
 
-if auth_user:
+if auth_user[0]:
+    st.title("List of Audio Files")
     audio_files = get_journal_history()
     if audio_files:
         st.write("Audio Journal History")
