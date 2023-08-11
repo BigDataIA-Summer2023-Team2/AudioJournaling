@@ -12,7 +12,6 @@ COPY utils ./utils
 # Copy source code and dependency
 COPY gcs_key.json /
 
-
 RUN pip install -r requirements.txt
 RUN pip install --upgrade google-cloud-storage
 # Install the dependency

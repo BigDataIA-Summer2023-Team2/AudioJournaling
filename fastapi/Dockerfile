@@ -1,7 +1,7 @@
 FROM python:3.9
 # Base docker image of python 3.x
 
-RUN apt-get -y update; apt-get -y upgrade; apt-get -y install curl
+RUN apt-get -y update; apt-get -y upgrade; apt-get -y install curl libsndfile1 flac
 # Update the apt-get package and install curl for healthcheck
 
 RUN pip install --upgrade pip
@@ -12,6 +12,8 @@ WORKDIR /app
 
 ADD main.py requirements.txt /app/
 ADD utils /app/utils
+COPY gcs_key.json /
+
 # Copy main.py and requirements.txt from local into app dir inside the container
 
 RUN pip install -r requirements.txt
