@@ -1,7 +1,7 @@
 FROM python:3.9
 # Base docker image of python 3.x
 
-RUN apt-get -y update; apt-get -y upgrade; apt-get -y install curl libsndfile1 flac
+RUN apt-get -y update; apt-get -y upgrade; apt-get -y install curl libsndfile1 flac 
 # Update the apt-get package and install curl for healthcheck
 
 RUN pip install --upgrade pip
