@@ -1,7 +1,8 @@
 from fastapi import FastAPI, HTTPException, Depends
+from fastapi.responses import JSONResponse
 from utils.db_utils import models, schemas, engine, SessionLocal, crud
 from sqlalchemy.orm import Session
-# from utils.db_utils import models, engine, SessionLocal, schemas, crud, common, pipeline
+import json 
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -37,4 +38,11 @@ async def register_user(user_input: schemas.UserCreate, db: Session = Depends(ge
     if user_input.password != user_input.cnf_password:
         raise HTTPException(
             status_code=404, detail=r"Provided passwords do not match")
-    return crud.create_user(db, user_input)
+    try:
+        result = crud.create_user(db, user_input)
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(
+                status_code=500, detail=f"{str(e)}")
+    return JSONResponse(content=result)

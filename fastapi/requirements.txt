@@ -10,3 +10,11 @@ pytest
 sqlmodel
 bcrypt
 python-jose
+pydantic
+google-cloud-storage
+soundfile
+pinecone-client
+panns-inference
+torch
+openai
+SpeechRecognition

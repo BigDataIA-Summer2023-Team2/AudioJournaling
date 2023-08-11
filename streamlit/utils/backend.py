@@ -40,7 +40,10 @@ def create_user(username, password, cnf_password, firstname, lastname):
     json_payload = json.dumps(payload)
 
     response = requests.request("POST", url, headers=headers, data=json_payload)
-    return response
+    if response.status_code == 200:
+        return True, response.json().get("username")
+    else:
+        return False, response.json().get("detail")
 
 def authenticate_user(username, password):
     db = SessionLocal()

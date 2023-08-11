@@ -4,7 +4,7 @@ from utils import generic
 from fastapi import HTTPException
 
 def create_user(db: Session, user: schemas.UserCreate):
-    if get_user_by_username(user.username):
+    if get_user_by_username(db, user.username):
         raise HTTPException(status_code = 404, detail = r"Username already in use!")
     if user.cnf_password != user.password:
         raise HTTPException(status_code = 404, detail = r"Passwords do not match!")
@@ -15,7 +15,7 @@ def create_user(db: Session, user: schemas.UserCreate):
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
-    return db_user
+    return dict(db_user)
 
 def get_user_by_username(db: Session, username):
     result_user = db.query(models.User).filter(models.User.username == username).first()
@@ -30,7 +30,7 @@ def authenticate_user(db: Session, credentials: schemas.UserAuthentication):
 
 def generate_jwt_token(username, password, user_id):
     if not (username and password):
-        raise Exception(
+        raise HTTPException(
             status_code=404, detail=r"Username and password cannot be empty")
     data_to_encode = {
         "username": username,

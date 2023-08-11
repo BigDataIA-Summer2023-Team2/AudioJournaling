@@ -5,6 +5,7 @@ from utils.generic import parse_timestamp, get_hashed_password
 import bcrypt
 from sqlalchemy.orm import validates, relationship
 import re
+from fastapi import HTTPException
 
 
 class User(Base):
@@ -41,14 +42,14 @@ class User(Base):
     @validates('username')
     def validate_username(self, key, username):
         if not username:
-            raise Exception('No username provided')
+            raise HTTPException('No username provided')
 
         if not isinstance(username, str):
-            raise Exception('Username should be a string')
+            raise HTTPException('Username should be a string')
 
         if self.username:
             if self.username != username:
-                raise Exception('Username update not allowed')
+                raise HTTPException('Username update not allowed')
             else:
                 return username
 
@@ -57,7 +58,7 @@ class User(Base):
 
         regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
         if not re.fullmatch(regex, username):
-            raise Exception(
+            raise HTTPException(
                 "Username doesn't have a valid email address")
 
         return username
@@ -68,29 +69,29 @@ class User(Base):
             raise Exception('first name can\'t be empty')
 
         if not isinstance(first_name, str):
-            raise Exception('First name should be a string')
+            raise HTTPException('First name should be a string')
 
         return first_name
 
     @validates('last_name')
     def validate_last_name(self, key, last_name):
         if not last_name:
-            raise Exception('last name can\'t be empty')
+            raise HTTPException('last name can\'t be empty')
 
         if not isinstance(last_name, str):
-            raise Exception('last name should be a string')
+            raise HTTPException('last name should be a string')
 
         return last_name
 
     def set_password(self, password):
         if not password:
-            raise Exception('Password not provided')
+            raise HTTPException('Password not provided')
 
         if not isinstance(password, str):
-            raise Exception('password should be a string')
+            raise HTTPException('password should be a string')
 
         if len(password) < 8 or len(password) > 50:
-            raise Exception(
+            raise HTTPException(
                 'Password must be between 8 and 50 characters')
         self.password_hash = get_hashed_password(password).decode('utf-8')
 
@@ -117,10 +118,10 @@ class UserAudioMetadata(Base):
     @validates('file_url')
     def validate_name(self, key, file_url):
         if not file_url:
-            raise Exception('name can\'t be empty')
+            raise HTTPException('name can\'t be empty')
 
         if not isinstance(file_url, str):
-            raise Exception('File URL should be a string')
+            raise HTTPException('File URL should be a string')
         return file_url
 
 class AudioDataMetadata(Base):
