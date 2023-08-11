@@ -18,3 +18,4 @@ panns-inference
 torch
 openai
 SpeechRecognition
+python-multipart

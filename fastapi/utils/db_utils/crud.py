@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from utils.db_utils import models, schemas
 from utils import generic
 from fastapi import HTTPException
+import os
 
 def create_user(db: Session, user: schemas.UserCreate):
     if get_user_by_username(db, user.username):
@@ -42,7 +43,7 @@ def generate_jwt_token(username, password, user_id):
     access_token = generic.create_access_token(data_to_encode)
     return access_token
 
-def validate_access_token(db: Session, user_input: schemas.UserAccessTokenValidation):
+def validate_access_token(db: Session, user_input: schemas.UserAccessToken):
     access_token = user_input.access_token
     if not access_token:
         raise HTTPException("No access token found!")

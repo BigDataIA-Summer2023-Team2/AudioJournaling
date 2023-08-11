@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
+from fastapi import UploadFile, File
 
 
 class UserBase(BaseModel):
@@ -30,5 +31,11 @@ class UserAudioEmotion(BaseModel):
 class DatasetAudio(BaseModel):
     audio_path: str
 
-class UserAccessTokenValidation(BaseModel):
+class UserAccessToken(BaseModel):
     access_token: str
+
+class UserAudioJournal(BaseModel):
+    audio_file: UploadFile = File(...)
+
+class CreateAudioJournal(UserAccessToken):
+    audio_file_name: str

@@ -1,8 +1,11 @@
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, File, UploadFile, Form
 from fastapi.responses import JSONResponse
 from utils.db_utils import models, schemas, engine, SessionLocal, crud
+from utils.generic import decode_token, journal
+from utils.gcp_utils import bucket
 from sqlalchemy.orm import Session
-import json 
+import os
+import uuid
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -60,9 +63,31 @@ async def authenticate_user(user_input: schemas.UserAuthentication, db: Session 
     return JSONResponse(content=result)
 
 @app.get("/api/v1/user/access_token")
-async def validate_access_token(user_input: schemas.UserAccessTokenValidation, db: Session = Depends(get_db)):
+async def validate_access_token(user_input: schemas.UserAccessToken, db: Session = Depends(get_db)):
     try:
         result = crud.validate_access_token(db, user_input)
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(
+                status_code=500, detail=f"{str(e)}")
+    return JSONResponse(content=result)
+
+@app.post("/api/v1/user/journal/create")
+async def create_journal_entry(access_token: str = Form(...), audio_file: UploadFile = File(...), db: Session = Depends(get_db)):
+    try:
+        file_folder = f"files/{str(uuid.uuid4())}"
+        os.makedirs(file_folder, exist_ok=True)
+
+        file_location = os.path.join(file_folder, audio_file.filename.split('/')[-1])
+        with open(file_location, "wb+") as file_object:
+            file_object.write(audio_file.file.read())
+        journal_input = {
+            "access_token": access_token,
+            "audio_file_name": file_location
+        }
+        journal_input = schemas.CreateAudioJournal(**journal_input)
+        result = journal.create_audio_journal_entry(db, journal_input)
     except HTTPException as e:
         raise e
     except Exception as e:

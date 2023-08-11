@@ -64,25 +64,20 @@ def validate_access_token(access_token):
         return False, response.json().get("detail")
 
 def create_new_audio(audio_file_name, access_token):
-    db = SessionLocal()
-    decoded_info = decode_token(access_token)
-    destination_file_name = os.path.join(str(decoded_info.get("user_id")), str(uuid.uuid4()),audio_file_name.split("/")[-1])
-    bucket.upload_blob(audio_file_name, destination_file_name)
-    data = {
-        "file_url": destination_file_name,
-        "user_id": decoded_info.get("user_id")
-        }
-    audio = schemas.UserAudioMetadata(**data)
-    db_audio = crud.add_audio_metadata(db, audio)
-    transcript, emotion = process_user_audio(destination_file_name)
-    data = {
-        "audio_id": db_audio.id,
-        "emotion": emotion
+    url = f"{BACKEND_API_URL}/api/v1/user/journal/create"
+    if not access_token:
+        access_token = ""
+    payload  = {
+        "access_token": access_token,
     }
-    user_input = schemas.UserAudioEmotion(**data)
-    crud.set_emotion_user_audio(db, user_input)
-    return generate_suggestions(transcript, emotion)
-
+    files = {
+        "audio_file": (f'{audio_file_name}', open(f'{audio_file_name}', 'rb'), 'audio/wav'),
+    }
+    response = requests.request("POST", url, data=payload, files=files)
+    if response.status_code == 200:
+        return True, response.json().get("quote")
+    else:
+        return False, response.json().get("detail")
 
 def fetch_journal_history(access_token, start_date=datetime.now() - timedelta(5), end_date = datetime.now()):
     db = SessionLocal()
@@ -127,7 +122,7 @@ def get_user_emotions(access_token, start_date=datetime.now() - timedelta(7), en
 #     audio_transcript = get_audio_transcript(audio_file)
 
 # create_user("ashritha@gmail.com", "ashritha", "ashritha", "ashritha", "ashritha")
-# jwt_token = authenticate_user("ashritha@gmail.com", "ashritha")
+# jwt_token = authenticate_user("ashritha@gmail.com", "ashritha")[1]
 # print(validate_access_token(jwt_token))
 # result = create_new_audio("/Users/sayalidalvi/ashritha/Project_old/audio_journaling/archive/Actor_01/03-01-04-02-01-01-01.wav", jwt_token)
 # print(result)

@@ -11,7 +11,7 @@ import uuid
 # Initialization
 if 'auth_token' not in st.session_state:
     st.session_state.auth_token = None
-    
+
 # Function to calculate audio duration
 def get_audio_duration(audio_data):
     y, sr = audio_data
@@ -47,8 +47,11 @@ def upload_audio_page():
                 audio_data, sr = sf.read(uploaded_file)
                 with st.spinner("Saving to Journal..."):
                     response = save_audio(audio_data, sr)
-                st.success('Noted your journal!', icon="✅")
-                st.success(f'{response}❕', icon='😇')
+                if response[0]:
+                    st.success('Noted your journal!', icon="✅")
+                    st.success(f'{response[1]}❕', icon='😇')
+                else:
+                    st.error(f"Error saving your journal. Details: {response[1]}", icon="🚨")
         except Exception as e:
             st.error(f"Error reading the audio file: {e}")
 
@@ -69,8 +72,11 @@ def upload_live_page():
             if st.button("Submit Live Audio"): 
                 with st.spinner("Saving to Journal..."):
                     response = save_audio(audio_data, sr)
-                st.success('Noted your journal!', icon="✅")
-                st.success(f'{response}❕', icon='😇')
+                if response[0]:
+                    st.success('Noted your journal!', icon="✅")
+                    st.success(f'{response[1]}❕', icon='😇')
+                else:
+                    st.error(f"Error saving your journal. Details: {response[1]}", icon="🚨")
         else:
             st.error("No audio recorded.")
 
