@@ -1,12 +1,5 @@
-from utils.db_utils import SessionLocal, crud, schemas, models, engine
-from utils.generic import decode_token, get_audio_transcript
-from utils.gcp_utils import bucket
-from utils.pinecone_utils import get_similar_audios
 import os
-import uuid
 from datetime import datetime, timedelta
-from utils.pinecone_utils import get_similar_audios
-from utils.generic.llm import generate_suggestions
 import requests
 import json
 import os
@@ -14,8 +7,6 @@ import os
 BACKEND_API_URL = os.getenv("BACKEND_API_URL", "http://api:8095")
 
 headers = {'Content-Type': 'application/json'}
-
-models.Base.metadata.create_all(bind=engine)
 
 def create_user(username, password, cnf_password, firstname, lastname):
     url = f"{BACKEND_API_URL}/api/v1/user"
