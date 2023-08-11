@@ -2,6 +2,10 @@ import streamlit as st
 import os
 from utils import backend
 
+# Initialization
+if 'auth_token' not in st.session_state:
+    st.session_state.auth_token = None
+    
 def list_audio_files():
     audio_files = [f for f in os.listdir('.') if f.endswith('.mp3') or f.endswith('.wav')]
     return sorted(audio_files, reverse=True) 

@@ -11,6 +11,10 @@ st.set_page_config(
 
 st.title("User Registration")
 
+# Initialization
+if 'auth_token' not in st.session_state:
+    st.session_state.auth_token = None
+
 def register_user():
     response = backend.create_user(username, password, cnf_password, firstname, lastname)
     if response.get("username"):

@@ -8,6 +8,10 @@ from audio_recorder_streamlit import audio_recorder
 from utils import backend
 import uuid
 
+# Initialization
+if 'auth_token' not in st.session_state:
+    st.session_state.auth_token = None
+    
 # Function to calculate audio duration
 def get_audio_duration(audio_data):
     y, sr = audio_data

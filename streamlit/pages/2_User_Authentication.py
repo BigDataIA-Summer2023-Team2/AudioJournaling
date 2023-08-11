@@ -11,6 +11,10 @@ st.set_page_config(
 
 st.title("User Authentication")
 
+# Initialization
+if 'auth_token' not in st.session_state:
+    st.session_state.auth_token = None
+
 def authentication():
     response = backend.validate_access_token(st.session_state.auth_token)
     return response

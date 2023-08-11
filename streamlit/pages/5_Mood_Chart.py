@@ -3,6 +3,10 @@ from utils import backend
 import plotly.express as px
 from datetime import datetime, timedelta
 
+# Initialization
+if 'auth_token' not in st.session_state:
+    st.session_state.auth_token = None
+    
 def plotly_chart():
     data = get_user_emotions()
     fig = px.pie(values=data.values(), names=data.keys(), hole=0.5, title='Mood chart')

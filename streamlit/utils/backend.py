@@ -7,20 +7,40 @@ import uuid
 from datetime import datetime, timedelta
 from utils.pinecone_utils import get_similar_audios
 from utils.generic.llm import generate_suggestions
+import requests
+import json
+import os
+
+BACKEND_API_URL = os.getenv("BACKEND_API_URL", "http://api:8095")
+
+headers = {'Content-Type': 'application/json'}
 
 models.Base.metadata.create_all(bind=engine)
 
 def create_user(username, password, cnf_password, firstname, lastname):
-    db = SessionLocal()
-    data = {
+    # db = SessionLocal()
+    # data = {
+    #     "username": username,
+    #     "password": password,
+    #     "cnf_password": cnf_password,
+    #     "firstname": firstname,
+    #     "lastname": lastname
+    # }
+    # user = schemas.UserCreate(**data)
+    # return crud.create_user(db, user).__dict__
+
+    url = f"{BACKEND_API_URL}/api/v1/user"
+    payload = {
         "username": username,
         "password": password,
         "cnf_password": cnf_password,
         "firstname": firstname,
         "lastname": lastname
     }
-    user = schemas.UserCreate(**data)
-    return crud.create_user(db, user).__dict__
+    json_payload = json.dumps(payload)
+
+    response = requests.request("POST", url, headers=headers, data=json_payload)
+    return response
 
 def authenticate_user(username, password):
     db = SessionLocal()
