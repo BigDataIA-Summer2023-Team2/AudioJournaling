@@ -26,7 +26,7 @@ async def root():
 async def check() -> dict:
     return {"message": "OK"}
 
-@app.post("/api/v1/user", response_model=schemas.UserCreate)
+@app.post("/api/v1/user")
 async def register_user(user_input: schemas.UserCreate, db: Session = Depends(get_db)):
     if not (user_input.username and
             user_input.password and
@@ -40,6 +40,29 @@ async def register_user(user_input: schemas.UserCreate, db: Session = Depends(ge
             status_code=404, detail=r"Provided passwords do not match")
     try:
         result = crud.create_user(db, user_input)
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(
+                status_code=500, detail=f"{str(e)}")
+    return JSONResponse(content=result)
+
+
+@app.post("/api/v1/user/authenticate")
+async def authenticate_user(user_input: schemas.UserAuthentication, db: Session = Depends(get_db)):
+    try:
+        result = crud.authenticate_user(db, user_input)
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(
+                status_code=500, detail=f"{str(e)}")
+    return JSONResponse(content=result)
+
+@app.get("/api/v1/user/access_token")
+async def validate_access_token(user_input: schemas.UserAccessTokenValidation, db: Session = Depends(get_db)):
+    try:
+        result = crud.validate_access_token(db, user_input)
     except HTTPException as e:
         raise e
     except Exception as e:

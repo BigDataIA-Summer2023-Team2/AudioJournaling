@@ -29,3 +29,6 @@ class UserAudioEmotion(BaseModel):
 
 class DatasetAudio(BaseModel):
     audio_path: str
+
+class UserAccessTokenValidation(BaseModel):
+    access_token: str

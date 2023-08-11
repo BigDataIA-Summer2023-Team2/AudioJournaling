@@ -24,10 +24,12 @@ def get_user_by_username(db: Session, username):
 def authenticate_user(db: Session, credentials: schemas.UserAuthentication):
     result_user = db.query(models.User).filter(models.User.username == credentials.username).first()
     if not result_user: # username doesn't exists
-        return
+        raise HTTPException(status_code = 403, detail = r"Forbidden! Please check your username and password")
     if result_user.check_password(credentials.password):
-        return generate_jwt_token(credentials.username, credentials.password, result_user.id)
-
+        return {"auth_token": generate_jwt_token(credentials.username, credentials.password, result_user.id)}
+    else:
+        raise HTTPException(status_code = 403, detail = r"Forbidden! Please check your username and password")
+    
 def generate_jwt_token(username, password, user_id):
     if not (username and password):
         raise HTTPException(
@@ -40,9 +42,10 @@ def generate_jwt_token(username, password, user_id):
     access_token = generic.create_access_token(data_to_encode)
     return access_token
 
-def validate_access_token(db: Session, access_token: str):
+def validate_access_token(db: Session, user_input: schemas.UserAccessTokenValidation):
+    access_token = user_input.access_token
     if not access_token:
-        return False
+        raise HTTPException("No access token found!")
     decoded_data = generic.decode_token(access_token)
     generic.compare_time(decoded_data["exp"])
     username = decoded_data["username"]
@@ -51,8 +54,10 @@ def validate_access_token(db: Session, access_token: str):
             models.User.username == username and
             models.User.hashed_password == hashed_password).first()
     if not result_user:
-        return False
-    return result_user.first_name + " " + result_user.last_name
+        raise HTTPException("Invalid access token!")
+    return {"username": result_user.username,
+            "name": result_user.first_name + " " + result_user.last_name
+            }
 
 def add_audio_metadata(db: Session, audio: schemas.UserAudioMetadata):
 

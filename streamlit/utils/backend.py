@@ -18,17 +18,6 @@ headers = {'Content-Type': 'application/json'}
 models.Base.metadata.create_all(bind=engine)
 
 def create_user(username, password, cnf_password, firstname, lastname):
-    # db = SessionLocal()
-    # data = {
-    #     "username": username,
-    #     "password": password,
-    #     "cnf_password": cnf_password,
-    #     "firstname": firstname,
-    #     "lastname": lastname
-    # }
-    # user = schemas.UserCreate(**data)
-    # return crud.create_user(db, user).__dict__
-
     url = f"{BACKEND_API_URL}/api/v1/user"
     payload = {
         "username": username,
@@ -46,17 +35,33 @@ def create_user(username, password, cnf_password, firstname, lastname):
         return False, response.json().get("detail")
 
 def authenticate_user(username, password):
-    db = SessionLocal()
-    data = {
+    url = f"{BACKEND_API_URL}/api/v1/user/authenticate"
+    payload  = {
         "username": username,
         "password": password
     }
-    creds = schemas.UserAuthentication(**data)
-    return crud.authenticate_user(db, creds)
+    json_payload = json.dumps(payload)
+
+    response = requests.request("POST", url, headers=headers, data=json_payload)
+    if response.status_code == 200:
+        return True, response.json().get("auth_token")
+    else:
+        return False, response.json().get("detail")
 
 def validate_access_token(access_token):
-    db = SessionLocal()
-    return crud.validate_access_token(db, access_token)
+    url = f"{BACKEND_API_URL}/api/v1/user/access_token"
+    if not access_token:
+        access_token = ""
+    payload  = {
+        "access_token": access_token
+    }
+    json_payload = json.dumps(payload)
+
+    response = requests.request("GET", url, headers=headers, data=json_payload)
+    if response.status_code == 200:
+        return True, response.json().get("username")
+    else:
+        return False, response.json().get("detail")
 
 def create_new_audio(audio_file_name, access_token):
     db = SessionLocal()
