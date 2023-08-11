@@ -80,31 +80,21 @@ def create_new_audio(audio_file_name, access_token):
         return False, response.json().get("detail")
 
 def fetch_journal_history(access_token, start_date=datetime.now() - timedelta(5), end_date = datetime.now()):
-    db = SessionLocal()
-    decoded_info = decode_token(access_token)
-    data = {
-        "start_date": start_date,
-        "end_date" : end_date,
-        "user_id": decoded_info.get("user_id")
+    url = f"{BACKEND_API_URL}/api/v1/user/journal/history"
+    if not access_token:
+        access_token = ""
+    payload  = {
+        "start_date": start_date.isoformat(),
+        "end_date": end_date.isoformat(),
+        "access_token": access_token
     }
-    user_input = schemas.UserAudioHistory(**data)
-    return crud.get_journal_history(db, user_input)
+    json_payload = json.dumps(payload)
 
-def fetch_file_gcs(file_url):
-    file_name = bucket.download_as_file(file_url)
-    return file_name
-
-def process_user_audio(file_url):
-    local_file_name = fetch_file_gcs(file_url)
-    transcript = get_audio_transcript(local_file_name)
-    audio_ids = get_similar_audios(local_file_name)
-    db = SessionLocal()
-    data = {
-        "audio_path": audio_ids[0] 
-    }
-    user_input = schemas.DatasetAudio(**data)
-    emotion = crud.get_emotion_audio_data(db, user_input)
-    return transcript, emotion
+    response = requests.request("GET", url, headers=headers, data=json_payload)
+    if response.status_code == 200:
+        return True, response.json()
+    else:
+        return False, response.json().get("detail")
 
 def get_user_emotions(access_token, start_date=datetime.now() - timedelta(7), end_date=datetime.now()):
     db = SessionLocal()
@@ -118,6 +108,22 @@ def get_user_emotions(access_token, start_date=datetime.now() - timedelta(7), en
     emotions = crud.get_user_emotions(db, user_input)
     return emotions
 
+def fetch_audio_file(access_token, file_name):
+    url = f"{BACKEND_API_URL}/api/v1/user/journal/audio"
+    if not access_token:
+        access_token = ""
+    payload  = {
+        "file_url": file_name,
+        "access_token": access_token
+    }
+    json_payload = json.dumps(payload)
+    response = requests.request("GET", url, headers=headers, data=json_payload)
+    if response.status_code == 200:
+        with open("downloaded_audio.wav", "wb") as f:
+            f.write(response.content)
+        return True, "downloaded_audio.wav"
+    else:
+        return False, response.json().get("detail")
 # def generate_suggestion(audio_file, emotion):
 #     audio_transcript = get_audio_transcript(audio_file)
 
@@ -128,6 +134,7 @@ def get_user_emotions(access_token, start_date=datetime.now() - timedelta(7), en
 # print(result)
 # from datetime import datetime, timedelta
 # audio_history = fetch_journal_history(jwt_token, datetime.now() - timedelta(1),datetime.now())
+# print(audio_history)
 # fetch_file_gcs(audio_history[13]['file_url'])
 # result = get_user_emotions(jwt_token)
 # print(result)

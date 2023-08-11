@@ -61,7 +61,6 @@ def validate_access_token(db: Session, user_input: schemas.UserAccessToken):
             }
 
 def add_audio_metadata(db: Session, audio: schemas.UserAudioMetadata):
-
     db_audio = models.UserAudioMetadata(file_url=audio.file_url,
                                        user_id=audio.user_id)
     db.add(db_audio)
@@ -70,7 +69,8 @@ def add_audio_metadata(db: Session, audio: schemas.UserAudioMetadata):
     return db_audio
 
 def get_journal_history(db: Session, user_input: schemas.UserAudioHistory):
-    db_audio_history = db.query(models.UserAudioMetadata).filter(user_input.user_id == models.UserAudioMetadata.user_id).all()
+    decoded_info = generic.decode_token(user_input.access_token)
+    db_audio_history = db.query(models.UserAudioMetadata).filter(decoded_info.get("user_id") == models.UserAudioMetadata.user_id).all()
     result = [{"id": row.id, "file_url": row.file_url} for row in db_audio_history]
     return result
 

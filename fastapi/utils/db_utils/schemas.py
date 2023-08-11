@@ -19,11 +19,6 @@ class UserAudioMetadata(BaseModel):
     file_url: str
     user_id: int
 
-class UserAudioHistory(BaseModel):
-    start_date: datetime
-    end_date: datetime
-    user_id: int
-
 class UserAudioEmotion(BaseModel):
     audio_id: int
     emotion: str
@@ -39,3 +34,10 @@ class UserAudioJournal(BaseModel):
 
 class CreateAudioJournal(UserAccessToken):
     audio_file_name: str
+
+class UserAudioHistory(UserAccessToken):
+    start_date: datetime
+    end_date: datetime
+
+class UserJournalAudio(UserAccessToken):
+    file_url: str

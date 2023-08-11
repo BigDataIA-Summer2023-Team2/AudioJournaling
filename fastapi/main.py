@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException, Depends, File, UploadFile, Form
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse, FileResponse
 from utils.db_utils import models, schemas, engine, SessionLocal, crud
 from utils.generic import decode_token, journal
 from utils.gcp_utils import bucket
@@ -94,3 +94,23 @@ async def create_journal_entry(access_token: str = Form(...), audio_file: Upload
         raise HTTPException(
                 status_code=500, detail=f"{str(e)}")
     return JSONResponse(content=result)
+
+@app.get("/api/v1/user/journal/history")
+async def fetch_journal_history(user_input: schemas.UserAudioHistory, db: Session = Depends(get_db)):
+    try:
+        result = crud.get_journal_history(db, user_input)
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(
+                status_code=500, detail=f"{str(e)}")
+    return JSONResponse(content=result)
+
+@app.get("/api/v1/user/journal/audio")
+async def fetch_audio_file(user_input: schemas.UserJournalAudio, db: Session = Depends(get_db)):
+    downloaded_file = bucket.download_as_file(user_input.file_url)
+    return FileResponse(downloaded_file, media_type="audio/wav", headers={"Content-Disposition": "attachment; filename=audio.wav"})
+    # def iterfile():
+    #     with open(downloaded_file, mode="rb") as file_like:  # 
+    #         yield from file_like  # 
+    # return StreamingResponse(iterfile(), media_type="video/mp4")
