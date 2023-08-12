@@ -35,4 +35,5 @@ terraform.rc
 .terraform.lock.hcl
 
 gcp_key*
-sounjot*
+soundjot
+soundjot.pub
