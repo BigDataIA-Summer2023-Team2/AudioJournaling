@@ -43,21 +43,98 @@ Explore the comprehensive documentation for our application, SoundJot, and unloc
     "universe_domain": "googleapis.com"
   }
   
-3. 3. Create a kaggle.json{} file in airflow folder with following variables defined
+3. Create a kaggle.json{} file in airflow folder with following variables defined
     {"username":"xxx","key":"000"}
+4. Create a .env file in the Project folder
+POSTGRES_USER="soundjot"
+POSTGRES_PASSWORD="soundjot"
+POSTGRES_DB="soundjot"
+POSTGRES_HOST="localhost"
+GOOGLE_APPLICATION_CREDENTIALS="/gcs_key.json"
+KAGGLE_DATASET_NAME="ejlok1/cremad,ejlok1/surrey-audiovisual-expressed-emotion-savee,uwrfkaggler/ravdess-emotional-speech-audio,ejlok1/toronto-emotional-speech-set-tess"
+AIRFLOW_UID=1000
+AIRFLOW_PROJ_DIR=./airflow
+KAGGLE_USERNAME = "xxx"
+KAGGLE_KEY = "xxx"
+DATA_DOWNLOAD_PATH="./data"
+LIBROSA_CACHE_DIR = '/tmp/librosa_cache'
+PINECONE_API_KEY="xxx"
+PINECONE_ENVIRONMENT="asia-southeast1-gcp-free"
+NUMBA_CACHE_DIR='/tmp'
 
-4. Run the make command to build and deploy the application
+5. Run the make command to build and deploy the application
     ```bash
         make build-up
     ```
-5. Applciation would be accessible on localhost at following URLs \
+6. Applciation would be accessible on localhost at following URLs \
     **Streamlit:** http://localhost:8090/ \
-6. Destroying the deployed environment
+7. Destroying the deployed environment
     ```bash
         make down
     ```
 ## Project Tree
-
+.
+├── Makefile
+├── README.md
+├── airflow
+│   ├── Dockerfile
+│   ├── dags
+│   │   ├── gcp_to_pinecone.py
+│   │   ├── kaggle_to_gcp.py
+│   │   ├── kaggle_to_pinecone.py
+│   │   ├── populate_metadata.py
+│   │   └── utils
+│   ├── gcs_key.json
+│   ├── kaggle.json
+│   ├── kaggle.json:Zone.Identifier
+│   └── requirements.txt
+├── config
+├── dags
+├── docker-compose-local.yml
+├── fastapi
+│   ├── Dockerfile
+│   ├── main.py
+│   ├── requirements.txt
+│   └── utils
+│       ├── db_utils
+│       ├── gcp_utils
+│       ├── generic
+│       └── pinecone_utils
+├── gcs_key.json
+├── logs
+├── plugins
+├── streamlit
+│   ├── Dockerfile
+│   ├── Home.py
+│   ├── gcs_key.json
+│   ├── pages
+│   │   ├── 1_User_Registration.py
+│   │   ├── 2_User_Authentication.py
+│   │   ├── 3_Upload_Audio.py
+│   │   ├── 4_Show_Audio.py
+│   │   ├── 5_Mood_Chart.py
+│   │   └── __pycache__
+│   ├── requirements.txt
+│   ├── utils
+│   │   ├── __init__.py
+│   │   ├── __pycache__
+│   │   ├── backend.py
+│   │   ├── db_utils
+│   │   ├── gcp_utils
+│   │   ├── generic
+│   │   └── pinecone_utils
+│   └── venv
+│       ├── bin
+│       ├── etc
+│       ├── include
+│       ├── lib
+│       ├── lib64 -> lib
+│       ├── pyvenv.cfg
+│       └── share
+└── tests
+    └── pytest
+        ├── default.py
+        └── test.yaml
 
 ## References
 -[Kaggle] https://www.kaggle.com/ejlok1/surrey-audiovisual-expressed-emotion-savee
@@ -67,4 +144,14 @@ Explore the comprehensive documentation for our application, SoundJot, and unloc
 -[Kaggle] https://www.kaggle.com/code/ejlok1/audio-emotion-part-3-baseline-model/notebook
 -[Pinecone] https://docs.pinecone.io/docs/audio-search
 -[OpenAI]https://medium.com/muthoni-wanyoike/implementing-text-summarization-using-openais-gpt-3-api-dcd6be4f6933
+
+## Contributions
+
+| Contributor    | Contibutions |
+| -------- | ------- |
+| Ashritha Goramane  |  |
+| Rishabh Indoria    | 	|
+| Parvati Sohani     |	|
+
+
 
