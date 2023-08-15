@@ -21,3 +21,4 @@ SpeechRecognition
 python-multipart
 requests
 pydub
+openai-whisper

@@ -47,7 +47,7 @@ def process_user_audio(db: Session, file_url):
         print(f"Emotion: {emotion}")
     except Exception as e:
         print("Exception: ", str(e))
-        huggingface.get_emotion(local_file_name)
+        emotion = huggingface.get_emotion(local_file_name)
     return transcript, emotion
 
 def get_journal_by_date(db: Session, user_input: schemas.UserJournalByDate):
