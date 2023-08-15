@@ -116,5 +116,6 @@ def get_journal_transcript_by_date(db: Session, user_input):
         ).all()
     return_result = []
     for r in result:
-        return_result.append(r.transcript)
+        if r.transcript:
+            return_result.append(r.transcript)
     return "\n".join(return_result)
