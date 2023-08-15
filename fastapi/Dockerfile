@@ -22,5 +22,5 @@ RUN pip install -r requirements.txt
 EXPOSE 8095
 # Expose a port inside the container on which services run
 
-CMD ["uvicorn", "app.main:app", "--proxy-headers", "--host", "0.0.0.0", "--port", "8095", "--timeout-keep-alive", "120"]
+CMD ["uvicorn", "main:app", "--proxy-headers", "--host", "0.0.0.0", "--port", "8095", "--timeout-keep-alive", "120"]
 # gunicorn command to run the service with 4 worker nodes binding localhost/0.0.0.0 on port 8095 refering app inside the main.py
