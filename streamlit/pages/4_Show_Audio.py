@@ -12,7 +12,6 @@ def get_journal_history():
     if response[0]:
         journal_history = response[1]
         audio_files = pd.DataFrame(journal_history)
-        audio_files.drop(columns=["id"], inplace=True)
     else:
         audio_files = pd.DataFrame()
     return audio_files
@@ -39,6 +38,7 @@ if auth_user[0]:
         st.write("No audio files found.")
     else:
         st.write("Audio Journal History")
+        audio_df.drop(columns=["id"], inplace=True)
         st.write(audio_df)
 
         # Allow user to select an audio file to play
