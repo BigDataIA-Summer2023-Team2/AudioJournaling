@@ -3,7 +3,7 @@ python-dotenv
 fastapi
 uvicorn
 gunicorn
-psycopg2
+# psycopg2
 # Dev Dependencies
 httpx
 pytest
@@ -20,3 +20,4 @@ openai
 SpeechRecognition
 python-multipart
 requests
+pydub
