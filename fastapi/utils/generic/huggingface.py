@@ -19,4 +19,5 @@ def get_emotion(audio_file_wav):
         response = requests.post(API_URL, headers=headers, data=data)
         return response.json()
     output = query(file_name)
-    return output[0].get("label")
+    if output:
+        return output[0].get("label")
