@@ -1,11 +1,6 @@
 python-dotenv
 streamlit
-bcrypt
-sqlalchemy
-pydantic
-psycopg2-binary
-python-jose
-google-cloud-storage
 soundfile
 audio_recorder_streamlit
 plotly
+streamlit_extras

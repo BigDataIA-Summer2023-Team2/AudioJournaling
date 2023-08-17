@@ -4,7 +4,9 @@ from jose import jwt
 from datetime import datetime, timedelta
 import os
 import speech_recognition as sr
+import openai
 
+openai.api_key = os.getenv("OPENAI_API_KEY")
 SECRET_KEY = os.getenv("SECRET_KEY", "")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 30))
@@ -38,10 +40,14 @@ def compare_time(token_time: int):
         return False
 
 def get_audio_transcript(audio_file_name):
-    # use the audio file as the audio source                                        
-    r = sr.Recognizer()
-    with sr.AudioFile(audio_file_name) as source:
-        audio = r.record(source)  # read the entire audio file                  
-        transcript = r.recognize_google(audio)
-        print("Transcription: " + transcript)
+    # use the audio file as the audio source    
+    try:                                    
+        r = sr.Recognizer()
+        with sr.AudioFile(audio_file_name) as source:
+            audio = r.record(source)  # read the entire audio file                  
+            transcript = r.recognize_whisper(audio)
+            print("Transcription: " + transcript)
+    except Exception as e:
+        print("Exception:", str(e))
+        transcript = ""
     return transcript

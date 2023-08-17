@@ -89,8 +89,10 @@ async def create_journal_entry(access_token: str = Form(...), audio_file: Upload
         journal_input = schemas.CreateAudioJournal(**journal_input)
         result = journal.create_audio_journal_entry(db, journal_input)
     except HTTPException as e:
+        print(f"Error: {str(e)}")
         raise e
     except Exception as e:
+        print(f"Error: {str(e)}")
         raise HTTPException(
                 status_code=500, detail=f"{str(e)}")
     return JSONResponse(content=result)
@@ -116,6 +118,17 @@ async def get_user_emotion_history(user_input: schemas.UserAudioHistory, db: Ses
     try:
         result = crud.validate_access_token(db, user_input)
         result = crud.get_user_emotions(db, user_input)
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(
+                status_code=500, detail=f"{str(e)}")
+    return JSONResponse(content=result)
+
+@app.get("/api/v1/user/journal/transcript")
+async def get_journal_transcript(user_input: schemas.UserJournalByDate, db: Session = Depends(get_db)):
+    try:
+        result = journal.get_journal_by_date(db, user_input)
     except HTTPException as e:
         raise e
     except Exception as e:
